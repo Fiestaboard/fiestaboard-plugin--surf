@@ -1,6 +1,8 @@
 """Tests for surf data source."""
 
+import json
 import pytest
+from pathlib import Path
 from unittest.mock import Mock, patch
 from src.utils.surf import SurfSource, get_surf_source, OCEAN_BEACH_LAT, OCEAN_BEACH_LON
 
@@ -513,4 +515,45 @@ class TestSurfPluginClass:
         with patch.object(plugin, 'fetch_data', return_value=Mock(available=False, data=None)):
             lines = plugin.get_formatted_display()
             assert lines is None
+
+
+class TestManifestMetadata:
+    """Tests for the rich metadata format in the manifest."""
+
+    def test_manifest_uses_dict_simple_format(self):
+        manifest_path = Path(__file__).parent.parent / "manifest.json"
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        simple = manifest["variables"]["simple"]
+        assert isinstance(simple, dict), "simple should use the rich dict format"
+
+    def test_all_variables_have_descriptions(self):
+        manifest_path = Path(__file__).parent.parent / "manifest.json"
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        simple = manifest["variables"]["simple"]
+        for var_name, meta in simple.items():
+            assert "description" in meta and meta["description"], \
+                f"Variable '{var_name}' missing description"
+
+    def test_all_variables_have_valid_groups(self):
+        manifest_path = Path(__file__).parent.parent / "manifest.json"
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        groups = set(manifest["variables"].get("groups", {}).keys())
+        simple = manifest["variables"]["simple"]
+        for var_name, meta in simple.items():
+            group = meta.get("group", "")
+            if group:
+                assert group in groups, \
+                    f"Variable '{var_name}' references undefined group '{group}'"
+
+    def test_groups_are_defined(self):
+        manifest_path = Path(__file__).parent.parent / "manifest.json"
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        groups = manifest["variables"].get("groups", {})
+        assert len(groups) > 0, "Manifest should define at least one group"
+        for group_id, group_def in groups.items():
+            assert "label" in group_def, f"Group '{group_id}' missing label"
 
