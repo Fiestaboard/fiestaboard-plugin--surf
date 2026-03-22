@@ -12,90 +12,41 @@
   "settings_schema": {
     "type": "object",
     "properties": {
-      "enabled": {
-        "type": "boolean",
-        "title": "Enable Surf Conditions",
-        "default": false
-      },
-      "latitude": {
-        "type": "number",
-        "title": "Latitude",
-        "description": "Surf spot latitude",
-        "default": 37.7599
-      },
-      "longitude": {
-        "type": "number",
-        "title": "Longitude",
-        "description": "Surf spot longitude",
-        "default": -122.5121
-      },
-      "refresh_seconds": {
-        "type": "integer",
-        "title": "Refresh Interval (seconds)",
-        "default": 300,
-        "minimum": 60
-      }
+      "enabled": {"type": "boolean", "title": "Enable Surf Conditions", "default": false},
+      "latitude": {"type": "number", "title": "Latitude", "description": "Surf spot latitude", "default": 37.7599},
+      "longitude": {"type": "number", "title": "Longitude", "description": "Surf spot longitude", "default": -122.5121},
+      "refresh_seconds": {"type": "integer", "title": "Refresh Interval (seconds)", "default": 300, "minimum": 60}
     }
   },
   "env_vars": [
-    {
-      "name": "SURF_LATITUDE",
-      "required": false,
-      "description": "Surf spot latitude",
-      "default": "37.7599"
-    },
-    {
-      "name": "SURF_LONGITUDE",
-      "required": false,
-      "description": "Surf spot longitude",
-      "default": "-122.5121"
-    }
+    {"name": "SURF_LATITUDE", "required": false, "description": "Surf spot latitude", "default": "37.7599"},
+    {"name": "SURF_LONGITUDE", "required": false, "description": "Surf spot longitude", "default": "-122.5121"}
   ],
   "variables": {
-    "simple": [
-      "wave_height",
-      "swell_period",
-      "quality",
-      "quality_color",
-      "wind_speed",
-      "wind_direction",
-      "formatted"
-    ]
-  },
-  "max_lengths": {
-    "wave_height": 4,
-    "swell_period": 4,
-    "quality": 9,
-    "quality_color": 4,
-    "wind_speed": 4,
-    "wind_direction": 2,
-    "formatted": 22
+    "groups": {
+      "waves": {"label": "Wave Data"},
+      "wind": {"label": "Wind"},
+      "display": {"label": "Display"}
+    },
+    "simple": {
+      "wave_height": {"description": "Current wave height in feet", "type": "number", "max_length": 4, "group": "waves", "example": "4.2"},
+      "swell_period": {"description": "Swell period in seconds", "type": "number", "max_length": 4, "group": "waves", "example": "12"},
+      "quality": {"description": "Surf quality rating (EXCELLENT, GOOD, FAIR, POOR)", "type": "string", "max_length": 9, "group": "waves", "example": "GOOD"},
+      "quality_color": {"description": "Color code for the quality level", "type": "string", "max_length": 4, "group": "waves", "example": "{63}"},
+      "wind_speed": {"description": "Wind speed in mph", "type": "number", "max_length": 4, "group": "wind", "example": "8"},
+      "wind_direction": {"description": "Wind compass direction", "type": "string", "max_length": 2, "group": "wind", "example": "NW"},
+      "formatted": {"description": "Pre-formatted surf conditions summary", "type": "string", "max_length": 22, "group": "display", "example": "4.2ft GOOD 12s NW8mph"}
+    }
   },
   "color_rules_schema": {
     "quality": {
       "type": "match",
       "description": "Color based on surf quality",
       "default_rules": [
-        {
-          "condition": "==",
-          "value": "EXCELLENT",
-          "color": "green"
-        },
-        {
-          "condition": "==",
-          "value": "GOOD",
-          "color": "yellow"
-        },
-        {
-          "condition": "==",
-          "value": "FAIR",
-          "color": "orange"
-        },
-        {
-          "condition": "==",
-          "value": "POOR",
-          "color": "red"
-        }
+        {"condition": "==", "value": "EXCELLENT", "color": "green"},
+        {"condition": "==", "value": "GOOD", "color": "yellow"},
+        {"condition": "==", "value": "FAIR", "color": "orange"},
+        {"condition": "==", "value": "POOR", "color": "red"}
       ]
     }
   },
