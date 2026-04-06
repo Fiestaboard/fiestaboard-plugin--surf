@@ -1,7 +1,7 @@
 {
   "id": "surf",
   "name": "Surf Conditions",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Display surf conditions including wave height and swell period",
   "author": "FiestaBoard Team",
   "repository": "https://github.com/Fiestaboard/fiestaboard-plugin--surf",
@@ -151,5 +151,43 @@
       "caption": "Display surf conditions including wave height and swell period",
       "primary": true
     }
-  ]
+  ],
+  "demo": {
+    "name": "Surf Conditions Demo",
+    "device_type": "flagship",
+    "template": [
+      "Surf Report",
+      "Waves {{surf.wave_height}} ft",
+      "Period {{surf.swell_period}} sec",
+      "Quality {{surf.quality}}",
+      "{{surf.quality_color}}",
+      "Wind {{surf.wind_speed}} {{surf.wind_direction}}"
+    ],
+    "line_metadata": [
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      }
+    ]
+  }
 }
