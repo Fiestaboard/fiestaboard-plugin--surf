@@ -168,9 +168,9 @@
     {
       "device_type": "note",
       "rows": [
-        "SURF REPORT",
+        "{67}{67} SURF REPORT",
         "WAVES 4.2 FT",
-        "QUAL {65} GOOD"
+        "{66}GOOD QUALITY"
       ]
     }
   ],
