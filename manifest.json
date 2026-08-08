@@ -152,6 +152,28 @@
       "primary": true
     }
   ],
+  "teaser": "WAVES 4.2 FT",
+  "previews": [
+    {
+      "device_type": "flagship",
+      "rows": [
+        "{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}{67}",
+        "   OCEAN BEACH  SF",
+        "    4 TO 6 FT WAVES",
+        "   14 SEC PERIOD  NW",
+        "    WIND 8MPH OFFSHORE",
+        "     GOOD CONDITIONS"
+      ]
+    },
+    {
+      "device_type": "note",
+      "rows": [
+        "SURF REPORT",
+        "WAVES 4.2 FT",
+        "QUAL {65} GOOD"
+      ]
+    }
+  ],
   "demo": {
     "flagship": {
       "name": "Surf Conditions Demo",
