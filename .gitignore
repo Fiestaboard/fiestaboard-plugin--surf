@@ -25,3 +25,8 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Created by CI (and by anyone reproducing it locally) so the plugin can be
+# imported as `plugins.surf`; see .github/workflows/ci.yml
+/plugins/
+/surf
