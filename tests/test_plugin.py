@@ -295,23 +295,80 @@ class TestFetchData:
 
 
 class TestFormattedDisplay:
-    def test_renders_six_rows(self, plugin):
+    """``get_formatted_display()`` -- the documented hook, board-adaptive.
+
+    Core never calls this hook today, but it is part of the plugin contract
+    and the conformance suite holds it to the same bounds as the live
+    ``formatted_lines`` path (see ``tests/test_board_conformance.py``), so it
+    must not be a hardcoded 22-wide block regardless of ``self.board``.
+    """
+
+    def test_flagship_default_renders_title_and_every_fact(self, plugin):
+        """With no board bound, defaults to the Flagship's 22x6 -- never crashes."""
         side_effect = _route_by_url(marine=_marine(0.6, 12.0), wind=_wind(8.0, 270))
         with patch("plugins.surf.requests.get", side_effect=side_effect):
             lines = plugin.get_formatted_display()
 
-        assert lines is not None
-        assert len(lines) == 6
-        assert lines[0].strip() == "SURF CONDITIONS"
-        assert lines[2].strip() == "WAVES: 2.0ft"
-        assert lines[3].strip() == "SWELL: 12.0s"
-        assert lines[4].strip() == "QUALITY: GOOD"
-        assert lines[5].strip() == "WIND: 8.0mph W"
+        assert lines == [
+            "   SURF CONDITIONS    ",
+            "  WAVE HEIGHT: 2.0FT  ",
+            " SWELL PERIOD: 12.0S  ",
+            "    QUALITY: GOOD     ",
+            " WIND SPEED: 8.0MPH W ",
+            "   GOOD DAY TO SURF   ",
+        ]
         assert all(len(line) <= 22 for line in lines)
+
+    def test_note_gets_a_compact_three_line_layout(self, plugin):
+        """A 15x3 Note can't fit six lines -- facts pack two-per-line instead."""
+        from src.devices import BoardContext
+
+        side_effect = _route_by_url(marine=_marine(0.6, 12.0), wind=_wind(8.0, 270))
+        with patch("plugins.surf.requests.get", side_effect=side_effect):
+            with plugin._bound_board(BoardContext("note", rows=3, cols=15)):
+                lines = plugin.get_formatted_display()
+
+        assert len(lines) == 3
+        assert all(len(line) <= 15 for line in lines)
+        assert "GOOD" in lines[0]
 
     def test_returns_none_when_fetch_fails(self, plugin):
         with patch("plugins.surf.requests.get", side_effect=Exception("down")):
             assert plugin.get_formatted_display() is None
+
+
+class TestFormattedLines:
+    """``fetch_data()``'s ``formatted_lines`` -- the path core actually renders."""
+
+    def test_matches_get_formatted_display(self, plugin):
+        """Both surfaces share one layout, so they can never drift apart."""
+        side_effect = _route_by_url(marine=_marine(0.6, 12.0), wind=_wind(8.0, 270))
+        with patch("plugins.surf.requests.get", side_effect=side_effect):
+            result = plugin.fetch_data()
+            hook_lines = plugin.get_formatted_display()
+
+        assert result.formatted_lines == hook_lines
+
+    def test_note_array_gets_more_detail_than_a_note(self, plugin):
+        """More rows means more facts shown, not the same content re-padded."""
+        from src.devices import BoardContext
+
+        side_effect = _route_by_url(marine=_marine(0.6, 12.0), wind=_wind(8.0, 270))
+        note = BoardContext("note", rows=3, cols=15)
+        tall_array = BoardContext("note_array", rows=12, cols=15)
+
+        with patch("plugins.surf.requests.get", side_effect=side_effect):
+            with plugin._bound_board(note):
+                note_lines = plugin.fetch_data().formatted_lines
+            with plugin._bound_board(tall_array):
+                array_lines = plugin.fetch_data().formatted_lines
+
+        note_nonblank = sum(1 for line in note_lines if line.strip())
+        array_nonblank = sum(1 for line in array_lines if line.strip())
+        assert note_nonblank == 3, "the Note's 3 lines are packed full"
+        assert array_nonblank > note_nonblank, "a taller board must show more, not the same content padded"
+        assert all(len(line) <= 15 for line in array_lines)
+        assert len(array_lines) <= 12
 
 
 class TestManifestMetadata:

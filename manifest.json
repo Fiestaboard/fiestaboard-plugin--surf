@@ -1,7 +1,7 @@
 {
   "id": "surf",
   "name": "Surf Conditions",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Display surf conditions including wave height and swell period",
   "author": "FiestaBoard Team",
   "repository": "https://github.com/Fiestaboard/fiestaboard-plugin--surf",
@@ -171,6 +171,16 @@
         "{67}{67} SURF REPORT",
         "WAVES 4.2 FT",
         "{66}GOOD QUALITY"
+      ]
+    },
+    {
+      "device_type": "note_array",
+      "notes_wide": 2,
+      "notes_tall": 1,
+      "rows": [
+        "   OCEAN BEACH SURF REPORT    ",
+        "   EXCELLENT - 4.2 FT WAVES   ",
+        "  12S PERIOD   8 MPH WIND NW  "
       ]
     }
   ],
